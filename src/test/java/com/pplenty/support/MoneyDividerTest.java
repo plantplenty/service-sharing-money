@@ -14,7 +14,7 @@ class MoneyDividerTest {
 
     @DisplayName("인원 수와 분배 수가 같은지 확인")
     @Test
-    void divide() {
+    void checkDividedCount() {
         // given
         MoneyDivider moneyDivider = new MoneyDivider();
         int amount = 100;
@@ -30,7 +30,7 @@ class MoneyDividerTest {
 
     @DisplayName("분배된 금액의 음수가 없는지 확인")
     @Test
-    void divide2() {
+    void checkDividedAmount() {
         // given
         MoneyDivider moneyDivider = new MoneyDivider();
         int amount = 100_000;

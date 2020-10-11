@@ -39,7 +39,7 @@ public class SharingService {
     @Transactional
     public Sharing generateSharing(SharingRequestDto requestDto) {
 
-        ArrayList<Distribution> distributions = new ArrayList<>();
+        List<Distribution> distributions = new ArrayList<>();
         List<Integer> dividedAmounts = moneyDivider.divide(requestDto.getAmount(), requestDto.getNumberOfTarget());
         for (Integer amount : dividedAmounts) {
             distributions.add(Distribution.builder()
