@@ -1,0 +1,35 @@
+POST http://localhost:9000/api/sharing
+Content-Type: application/json
+X-USER-ID: 123
+X-ROOM-ID: 321
+
+{
+  "amount": 10000,
+  "numberOfTarget": 3
+}
+
+###
+PUT http://localhost:9000/api/sharing/{{token}}
+Content-Type: application/json
+X-USER-ID: 123
+X-ROOM-ID: 321
+
+###
+PUT http://localhost:9000/api/sharing/{{token}}
+Content-Type: application/json
+X-USER-ID: 2
+X-ROOM-ID: 321
+
+###
+PUT http://localhost:9000/api/sharing/{{token}}
+Content-Type: application/json
+X-USER-ID: 3
+X-ROOM-ID: 321
+
+###
+GET http://localhost:9000/api/sharing/{{token}}
+Accept: application/json
+X-USER-ID: 123
+X-ROOM-ID: 321
+
+###
