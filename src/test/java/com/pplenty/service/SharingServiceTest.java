@@ -125,4 +125,21 @@ class SharingServiceTest {
                 .isInstanceOf(SharingException.class)
                 .hasMessage(SharingExceptionCode.NO_ACCESS_ROOM.getMessage());
     }
+
+    @DisplayName("같은 사람이 두번 가져가기 요청")
+    @Test
+    void duplicatedTaking() {
+        // given
+        int total = 1000;
+        int numberOfTarget = 5;
+        Sharing sharing = sharingService.generateSharing(SharingRequestDto.of(total, numberOfTarget, CREATOR_USER_ID, CREATOR_ROOM_ID));
+
+        // when & then
+        assertThatThrownBy(() -> {
+            sharingService.takeMoney(sharing.getToken(), SharingHeaderDto.of(TAKEN_USER_ID, CREATOR_ROOM_ID));
+            sharingService.takeMoney(sharing.getToken(), SharingHeaderDto.of(TAKEN_USER_ID, CREATOR_ROOM_ID));
+        })
+                .isInstanceOf(SharingException.class)
+                .hasMessage(SharingExceptionCode.DUPLICATED_TAKING.getMessage());
+    }
 }

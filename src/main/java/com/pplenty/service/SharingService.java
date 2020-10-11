@@ -14,7 +14,7 @@ import com.pplenty.support.MoneyDivider;
 import com.pplenty.support.TokenGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,7 +95,7 @@ public class SharingService {
                     .sharing(sharing)
                     .createdDate(LocalDateTime.now())
                     .build());
-        } catch (DuplicateKeyException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new SharingException(SharingExceptionCode.DUPLICATED_TAKING);
         }
     }
