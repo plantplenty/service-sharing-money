@@ -11,6 +11,7 @@ import com.pplenty.exception.SharingExceptionCode;
 import com.pplenty.repository.SharingRepository;
 import com.pplenty.repository.TakingRepository;
 import com.pplenty.support.MoneyDivider;
+import com.pplenty.support.TokenGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -33,6 +34,7 @@ public class SharingService {
     private final SharingRepository sharingRepository;
     private final TakingRepository takingRepository;
     private final MoneyDivider moneyDivider;
+    private final TokenGenerator tokenGenerator;
 
     @Transactional
     public Sharing generateToken(SharingRequestDto requestDto) {
@@ -46,7 +48,7 @@ public class SharingService {
         }
 
         return sharingRepository.save(Sharing.builder()
-                .token("ABC")
+                .token(tokenGenerator.generate())
                 .userId(requestDto.getUserId())
                 .roomId(requestDto.getRoomId())
                 .totalAmount(requestDto.getAmount())
