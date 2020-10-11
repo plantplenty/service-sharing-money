@@ -20,7 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 @ToString
 @Getter
 @Entity
-@NoArgsConstructor(access = PROTECTED) // proxy 생성 때문에 jpa 에서는 기본 생성자가 있어야함
+@NoArgsConstructor(access = PROTECTED)
 public class Sharing {
 
     private static final int EXPIRY_PERIOD = 10 * 60;

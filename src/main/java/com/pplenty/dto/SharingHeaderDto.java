@@ -10,7 +10,7 @@ public class SharingHeaderDto {
     private final long userId;
     private final long roomId;
 
-    public SharingHeaderDto(long userId, long roomId) {
+    private SharingHeaderDto(long userId, long roomId) {
         this.userId = userId;
         this.roomId = roomId;
     }

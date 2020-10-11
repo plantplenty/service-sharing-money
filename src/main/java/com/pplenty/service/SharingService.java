@@ -37,7 +37,7 @@ public class SharingService {
     private final TokenGenerator tokenGenerator;
 
     @Transactional
-    public Sharing generateToken(SharingRequestDto requestDto) {
+    public Sharing generateSharing(SharingRequestDto requestDto) {
 
         ArrayList<Distribution> distributions = new ArrayList<>();
         List<Integer> dividedAmounts = moneyDivider.divide(requestDto.getAmount(), requestDto.getNumberOfTarget());
@@ -55,33 +55,13 @@ public class SharingService {
                 .distributions(distributions)
                 .createdDate(LocalDateTime.now())
                 .build());
-
     }
 
     @Transactional
     public long takeMoney(String token, SharingHeaderDto sharingHeaderDto) {
 
         Sharing sharing = sharingRepository.findByToken(token);
-
-        if (Objects.isNull(sharing)) {
-            throw new SharingException(SharingExceptionCode.NO_TOKEN);
-        }
-
-        if (sharing.isSameUser(sharingHeaderDto.getUserId())) {
-            throw new SharingException(SharingExceptionCode.CANNOT_SELF_TAKING);
-        }
-
-        if (sharing.isDifferentRoom(sharingHeaderDto.getRoomId())) {
-            throw new SharingException(SharingExceptionCode.NO_ACCESS_ROOM);
-        }
-
-        if (sharing.isDifferentRoom(sharingHeaderDto.getRoomId())) {
-            throw new SharingException(SharingExceptionCode.NO_ACCESS_ROOM);
-        }
-
-        if (sharing.isExpired(LocalDateTime.now())) {
-            throw new SharingException(SharingExceptionCode.EXPIRED_DISTRIBUTION);
-        }
+        validate(sharingHeaderDto, sharing);
 
         Distribution preparedDistribution = sharing.getDistributions().stream()
                 .filter(Distribution::isReady)
@@ -93,7 +73,8 @@ public class SharingService {
         return preparedDistribution.getAmount();
     }
 
-    public SharingResponseDto findByToken(String token, SharingHeaderDto sharingHeaderDto) {
+    @Transactional(readOnly = true)
+    public SharingResponseDto getTakenStatusByToken(String token, SharingHeaderDto sharingHeaderDto) {
         Sharing sharing = sharingRepository.findByToken(token);
         if (!sharing.isSameUser(sharingHeaderDto.getUserId())) {
             throw new SharingException(SharingExceptionCode.NO_AUTHENTICATION);
@@ -112,6 +93,28 @@ public class SharingService {
                     .build());
         } catch (DuplicateKeyException e) {
             throw new SharingException(SharingExceptionCode.DUPLICATED_TAKING);
+        }
+    }
+
+    private void validate(SharingHeaderDto sharingHeaderDto, Sharing sharing) {
+        if (Objects.isNull(sharing)) {
+            throw new SharingException(SharingExceptionCode.NO_TOKEN);
+        }
+
+        if (sharing.isSameUser(sharingHeaderDto.getUserId())) {
+            throw new SharingException(SharingExceptionCode.CANNOT_SELF_TAKING);
+        }
+
+        if (sharing.isDifferentRoom(sharingHeaderDto.getRoomId())) {
+            throw new SharingException(SharingExceptionCode.NO_ACCESS_ROOM);
+        }
+
+        if (sharing.isDifferentRoom(sharingHeaderDto.getRoomId())) {
+            throw new SharingException(SharingExceptionCode.NO_ACCESS_ROOM);
+        }
+
+        if (sharing.isExpired(LocalDateTime.now())) {
+            throw new SharingException(SharingExceptionCode.EXPIRED_DISTRIBUTION);
         }
     }
 }

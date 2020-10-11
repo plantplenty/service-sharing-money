@@ -28,7 +28,7 @@ public class SharingController {
             @RequestBody SharingRequestDto requestDto) {
 
         requestDto.setHeaders(userId, roomId);
-        Sharing sharing = sharingService.generateToken(requestDto);
+        Sharing sharing = sharingService.generateSharing(requestDto);
         log.debug("sharing: {}", sharing);
         return ApiResponse.ok(sharing.getToken());
     }
@@ -43,10 +43,10 @@ public class SharingController {
     }
 
     @GetMapping("{token}")
-    public ApiResponse<SharingResponseDto> takenStatus(
+    public ApiResponse<SharingResponseDto> getTakenStatus(
             @RequestHeader("X-USER-ID") long userId,
             @RequestHeader("X-ROOM-ID") long roomId,
             @PathVariable String token) {
-        return ApiResponse.ok(sharingService.findByToken(token, SharingHeaderDto.of(userId, roomId)));
+        return ApiResponse.ok(sharingService.getTakenStatusByToken(token, SharingHeaderDto.of(userId, roomId)));
     }
 }
