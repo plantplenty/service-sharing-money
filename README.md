@@ -47,4 +47,42 @@ java -jar ./build/libs/service-sharing-money-1.0.0-SNAPSHOT.jar
     
     - 조회 API
         1. token 값으로 ```sharing```,  ```distribution``` table 조회
-    
+
+
+## 응답 포맷 [sample](./src/test/resources/http/sharing.http)  
+1. POST http://localhost:8080/api/sharing
+    ```json
+    {
+      "code": "ok",
+      "message": "success",
+      "data": "AP6"
+    }
+    ```
+
+2. PUT http://localhost:8080/api/sharing/{token}
+    ```json
+    {
+      "code": "ok",
+      "message": "success",
+      "data": 6537
+    }
+    ```
+3. GET http://localhost:8080/api/sharing/{token}
+    ```json
+    {
+      "code": "ok",
+      "message": "success",
+      "data": {
+        "totalAmount": 10000,
+        "sharedAmount": 6537,
+        "sharedDistributions": [
+          {
+            "amount": 6537,
+            "userId": 1,
+            "takenDate": "2020-10-12 01:02:31"
+          }
+        ],
+        "sharedDate": "2020-10-12 01:00:13"
+      }
+    }
+    ```
