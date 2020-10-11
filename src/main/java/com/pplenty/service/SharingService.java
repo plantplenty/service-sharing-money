@@ -10,6 +10,7 @@ import com.pplenty.exception.SharingException;
 import com.pplenty.exception.SharingExceptionCode;
 import com.pplenty.repository.SharingRepository;
 import com.pplenty.repository.TakingRepository;
+import com.pplenty.support.MoneyDivider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,13 +32,13 @@ public class SharingService {
 
     private final SharingRepository sharingRepository;
     private final TakingRepository takingRepository;
+    private final MoneyDivider moneyDivider;
 
     @Transactional
     public Sharing generateToken(SharingRequestDto requestDto) {
 
-        List<Integer> dividedAmounts = Arrays.asList(300, 400, 500);
-
         ArrayList<Distribution> distributions = new ArrayList<>();
+        List<Integer> dividedAmounts = moneyDivider.divide(requestDto.getAmount(), requestDto.getNumberOfTarget());
         for (Integer amount : dividedAmounts) {
             distributions.add(Distribution.builder()
                     .amount(amount)
