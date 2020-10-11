@@ -51,4 +51,44 @@ class SharingRepositoryTest {
         assertThat(sharing.getTotalAmount()).isEqualTo(totalAmount);
 
     }
+
+    @DisplayName("토큰 조회 만료 여부 확인(7일)")
+    @Test
+    void isExpired() {
+        // given
+        int totalAmount = 10000;
+        String token = "ABC";
+        Sharing sharing = sharingRepository.save(Sharing.builder()
+                .token(token).totalAmount(totalAmount)
+                .userId(CREATOR_USER_ID)
+                .roomId(CREATOR_ROOM_ID)
+                .distributions(emptyList())
+                .createdDate(LocalDateTime.now())
+                .build());
+
+        // when & then
+        assertThat(sharing.isExpired(LocalDateTime.now().plusDays(10))).isEqualTo(true);
+        assertThat(sharing.isExpired(LocalDateTime.now().plusDays(5))).isEqualTo(false);
+
+    }
+
+    @DisplayName("가져가기 유효기간 만료 여부 확인(10분)")
+    @Test
+    void canTake() {
+        // given
+        int totalAmount = 10000;
+        String token = "ABC";
+        Sharing sharing = sharingRepository.save(Sharing.builder()
+                .token(token).totalAmount(totalAmount)
+                .userId(CREATOR_USER_ID)
+                .roomId(CREATOR_ROOM_ID)
+                .distributions(emptyList())
+                .createdDate(LocalDateTime.now())
+                .build());
+
+        // when & then
+        assertThat(sharing.cannotTake(LocalDateTime.now().plusMinutes(15))).isEqualTo(true);
+        assertThat(sharing.cannotTake(LocalDateTime.now().plusMinutes(8))).isEqualTo(false);
+
+    }
 }

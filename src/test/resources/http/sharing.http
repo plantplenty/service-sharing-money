@@ -1,4 +1,5 @@
-POST http://localhost:9000/api/sharing
+### 돈 뿌리기
+POST http://{{host}}:{{port}}/api/sharing
 Content-Type: application/json
 X-USER-ID: 123
 X-ROOM-ID: 321
@@ -8,28 +9,26 @@ X-ROOM-ID: 321
   "numberOfTarget": 3
 }
 
-###
-PUT http://localhost:9000/api/sharing/{{token}}
+### 가져가기 1
+PUT http://{{host}}:{{port}}/api/sharing/{{token}}
 Content-Type: application/json
-X-USER-ID: 123
+X-USER-ID: 1
 X-ROOM-ID: 321
 
-###
-PUT http://localhost:9000/api/sharing/{{token}}
+### 가져가기 2
+PUT http://{{host}}:{{port}}/api/sharing/{{token}}
 Content-Type: application/json
 X-USER-ID: 2
 X-ROOM-ID: 321
 
-###
-PUT http://localhost:9000/api/sharing/{{token}}
+###가져가기 3
+PUT http://{{host}}:{{port}}/api/sharing/{{token}}
 Content-Type: application/json
 X-USER-ID: 3
 X-ROOM-ID: 321
 
-###
-GET http://localhost:9000/api/sharing/{{token}}
+### 토큰 조회
+GET http://{{host}}:{{port}}/api/sharing/{{token}}
 Accept: application/json
 X-USER-ID: 123
 X-ROOM-ID: 321
-
-###

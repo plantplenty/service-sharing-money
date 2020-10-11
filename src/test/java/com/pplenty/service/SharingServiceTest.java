@@ -4,6 +4,8 @@ import com.pplenty.domain.Sharing;
 import com.pplenty.dto.SharingHeaderDto;
 import com.pplenty.dto.SharingRequestDto;
 import com.pplenty.dto.SharingResponseDto;
+import com.pplenty.exception.SharingException;
+import com.pplenty.exception.SharingExceptionCode;
 import com.pplenty.repository.SharingRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Created by yusik on 2020/10/11.
@@ -81,5 +84,45 @@ class SharingServiceTest {
         assertThat(responseDto.getSharedDistributions()).hasSize(1);
         assertThat(responseDto.getSharedAmount()).isEqualTo(amount);
         assertThat(responseDto.getTotalAmount()).isEqualTo(total);
+    }
+
+    @DisplayName("없는 토큰 조회 오류")
+    @Test
+    void noToken() {
+        // given
+        String token = "NO!";
+
+        // when & then
+        assertThatThrownBy(() -> sharingService.takeMoney(token, SharingHeaderDto.of(TAKEN_USER_ID, CREATOR_ROOM_ID)))
+                .isInstanceOf(SharingException.class)
+                .hasMessage(SharingExceptionCode.NO_TOKEN.getMessage());
+    }
+
+    @DisplayName("자신이 뿌린 돈 가져가기 요청하면 에러")
+    @Test
+    void cannotSelfTaking() {
+        // given
+        int total = 1000;
+        int numberOfTarget = 5;
+        Sharing sharing = sharingService.generateSharing(SharingRequestDto.of(total, numberOfTarget, CREATOR_USER_ID, CREATOR_ROOM_ID));
+
+        // when & then
+        assertThatThrownBy(() -> sharingService.takeMoney(sharing.getToken(), SharingHeaderDto.of(CREATOR_USER_ID, CREATOR_ROOM_ID)))
+                .isInstanceOf(SharingException.class)
+                .hasMessage(SharingExceptionCode.CANNOT_SELF_TAKING.getMessage());
+    }
+
+    @DisplayName("다른 방에 뿌린돈 가져가기 오류")
+    @Test
+    void noAccessRoom() {
+        // given
+        int total = 1000;
+        int numberOfTarget = 5;
+        Sharing sharing = sharingService.generateSharing(SharingRequestDto.of(total, numberOfTarget, CREATOR_USER_ID, CREATOR_ROOM_ID));
+
+        // when & then
+        assertThatThrownBy(() -> sharingService.takeMoney(sharing.getToken(), SharingHeaderDto.of(TAKEN_USER_ID, CREATOR_ROOM_ID + 1)))
+                .isInstanceOf(SharingException.class)
+                .hasMessage(SharingExceptionCode.NO_ACCESS_ROOM.getMessage());
     }
 }

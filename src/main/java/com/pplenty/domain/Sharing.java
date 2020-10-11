@@ -23,7 +23,8 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 public class Sharing {
 
-    private static final int EXPIRY_PERIOD = 10 * 60;
+    private static final int EXPIRY_TAKING_SECONDS = 10 * 60;
+    private static final int EXPIRY_DAYS = 7;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,8 +67,12 @@ public class Sharing {
         return this.roomId != roomId;
     }
 
+    public boolean cannotTake(LocalDateTime now) {
+        return now.isAfter(createdDate.plusSeconds(EXPIRY_TAKING_SECONDS));
+    }
+
     public boolean isExpired(LocalDateTime now) {
-        return now.isAfter(createdDate.plusSeconds(EXPIRY_PERIOD));
+        return now.isAfter(createdDate.plusDays(EXPIRY_DAYS));
     }
 
     private void addAll(List<Distribution> distributions) {

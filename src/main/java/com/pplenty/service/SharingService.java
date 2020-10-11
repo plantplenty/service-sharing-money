@@ -80,6 +80,10 @@ public class SharingService {
             throw new SharingException(SharingExceptionCode.NO_AUTHENTICATION);
         }
 
+        if (sharing.isExpired(LocalDateTime.now())) {
+            throw new SharingException(SharingExceptionCode.EXPIRED_TOKEN);
+        }
+
         return SharingResponseDto.from(sharing);
     }
 
@@ -109,11 +113,7 @@ public class SharingService {
             throw new SharingException(SharingExceptionCode.NO_ACCESS_ROOM);
         }
 
-        if (sharing.isDifferentRoom(sharingHeaderDto.getRoomId())) {
-            throw new SharingException(SharingExceptionCode.NO_ACCESS_ROOM);
-        }
-
-        if (sharing.isExpired(LocalDateTime.now())) {
+        if (sharing.cannotTake(LocalDateTime.now())) {
             throw new SharingException(SharingExceptionCode.EXPIRED_DISTRIBUTION);
         }
     }
